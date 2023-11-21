@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { PostModule } from './modules/post/post.module';
+import { Post } from './modules/post/entities/post.entity';
 
 @Module({
   imports: [
@@ -14,11 +16,12 @@ import { ConfigModule } from '@nestjs/config';
       port: +process.env.PORT,
       password: process.env.PG_PASSWORD,
       username: process.env.PG_USERNAME,
-      entities: [],
+      entities: [Post],
       database: process.env.PG_DB,
       synchronize: true,
       logging: true,
     }),
+    PostModule
   ],
 })
 export class AppModule {}
