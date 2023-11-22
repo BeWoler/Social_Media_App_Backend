@@ -14,6 +14,9 @@ export class Post {
   @Column({ type: 'text' })
   content: string;
 
+  @Column({ type: 'int', default: 0 })
+  likesCount: number;
+
   @Column({ type: "date" })
   createdAt: Date;
 }
