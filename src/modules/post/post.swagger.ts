@@ -21,6 +21,16 @@ export const postSwagger = {
       type: PostResponseDTO,
     },
   },
+  GET_ALL_USER_POSTS: {
+    descr: {
+      summary: 'Get all user posts',
+      description: 'You must to add token to Headers (Authorization field)'
+    },
+    res: {
+      status: 200,
+      type: Array<PostResponseDTO>
+    }
+  },
   DELETE_POST_BY_ID: {
     descr: {
       summary: 'Delete post by id',

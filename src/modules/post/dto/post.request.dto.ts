@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsNotEmpty, IsString, IsUUID, MinLength } from "class-validator";
+import { User } from "src/modules/user/entities/user.entity";
 
 export class PostRequestDTO {
   @ApiProperty({ example: 'Post Title', required: true })
@@ -14,8 +15,9 @@ export class PostRequestDTO {
   @IsNotEmpty()
   content: string;
 
-  @ApiProperty({ example: 'Misha', required: true })
+  @ApiProperty({ example: 'dfdgdg40-dg345g-fgdf', required: true })
+  @IsUUID()
   @IsString()
   @IsNotEmpty()
-  author: string;
+  user: User;
 }

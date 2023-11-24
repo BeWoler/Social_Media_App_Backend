@@ -25,6 +25,14 @@ export class PostController {
     return this.postService.getAllPosts();
   }
 
+  @Get('/user/:id')
+  @ApiOperation(postSwagger.GET_ALL_USER_POSTS.descr)
+  @ApiResponse(postSwagger.GET_ALL_USER_POSTS.res)
+  @HttpCode(HttpStatus.OK)
+  async findAllByUserId(@Param('id') id: string): Promise<PostResponseDTO[]> {
+    return this.postService.getAllUserPosts(id);
+  }
+
   @Get(':id')
   @ApiOperation(postSwagger.GET_POST_BY_ID.descr)
   @ApiResponse(postSwagger.GET_POST_BY_ID.res)
