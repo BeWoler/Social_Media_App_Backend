@@ -6,10 +6,6 @@ export const swaggerSetup = (app: INestApplication): void => {
     .setTitle('Social Media App')
     .setDescription('Social Media App API')
     .setVersion('1.0')
-    // .addSecurity('bearer', {
-    //   type: 'http',
-    //   scheme: 'bearer',
-    // })
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

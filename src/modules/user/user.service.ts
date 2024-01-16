@@ -4,7 +4,6 @@ import { User } from "./entities/user.entity";
 import { Repository } from "typeorm";
 import { UserRequestDTO } from "./dto/user.request.dto";
 import { UserResponseDTO } from "./dto/user.response.dto";
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -13,23 +12,19 @@ export class UserService {
   ) {}
 
   async createUser(userRequestDto: UserRequestDTO): Promise<UserResponseDTO> {
-    const existingEmail = await this.userRepository.findOneBy({ email: userRequestDto.email})
+    const existingEmail = await this.userRepository.findOneBy({ email: userRequestDto.email })
+    const existingProvider = await this.userRepository.findOneBy({ provider: userRequestDto.provider })
 
-    if(existingEmail) {
+    if(existingEmail && existingProvider) {
       throw new HttpException('Email already exist!', HttpStatus.BAD_REQUEST)
-    }
-
-    if(!userRequestDto.password) {
-      throw new HttpException('Password is empty!', HttpStatus.BAD_REQUEST)
     }
 
     const user: User = new User()
 
-    const saltOrRounds = 10;
-
     user.email = userRequestDto.email;
     user.name = userRequestDto.name || '';
-    user.password = await bcrypt.hash(userRequestDto.password, saltOrRounds)
+    user.image = userRequestDto.image || '';
+    user.provider = userRequestDto.provider;
 
     return this.userRepository.save(user);
   }

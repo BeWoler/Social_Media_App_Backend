@@ -9,4 +9,10 @@ export class UserResponseDTO {
 
   @ApiProperty({ example: 'Michael' })
   name: string;
+
+  @ApiProperty({ example: 'github' })
+  provider: string;
+
+  @ApiProperty({ example: 'https://avatars.githubusercontent.com' })
+  image: string;
 }

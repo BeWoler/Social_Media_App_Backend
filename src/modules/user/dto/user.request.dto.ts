@@ -11,8 +11,11 @@ export class UserRequestDTO {
   @IsString()
   name?: string; 
 
-  @ApiProperty({ example: 'newPassword123', required: true })
+  @ApiProperty({ example: 'github', required: true })
+  provider: string;
+
+  @ApiProperty({ example: 'https://avatars.githubusercontent.com', required: false })
   @IsNotEmpty()
   @IsString()
-  password: string;
+  image?: string;
 }

@@ -11,6 +11,9 @@ export class User {
   @Column({ type: 'text'})
   name: string;
 
-  @Column({ type: 'text', select: false })
-  password: string;
+  @Column({ type: 'text'})
+  image: string;
+
+  @Column({ type: 'text' })
+  provider: string;
 }
