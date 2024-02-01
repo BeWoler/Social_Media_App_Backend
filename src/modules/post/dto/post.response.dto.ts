@@ -13,7 +13,7 @@ export class PostResponseDTO {
   user: User;
 
   @ApiProperty({ example: 'Post Content' })
-  content: string;
+  description: string;
 
   @ApiProperty({ example: 'Post Title' })
   title: string;

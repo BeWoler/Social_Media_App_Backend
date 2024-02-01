@@ -8,13 +8,13 @@ export class Post {
 
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn()
-  user: User
+  user: User;
 
   @Column({ type: 'text'})
   title: string;
 
   @Column({ type: 'text' })
-  content: string;
+  description: string;
 
   @Column({ type: 'int', default: 0 })
   likesCount: number;

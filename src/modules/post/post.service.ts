@@ -18,7 +18,7 @@ export class PostService {
 
     post.user = postRequestDto.user
     post.title = postRequestDto.title
-    post.content = postRequestDto.content
+    post.description = postRequestDto.description
     post.createdAt = new Date();
 
     return this.postRepository.save(post);

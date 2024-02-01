@@ -13,7 +13,7 @@ export class PostRequestDTO {
   @IsString()
   @MinLength(10, { message: 'Content must have atleast 10 characters.' })
   @IsNotEmpty()
-  content: string;
+  description: string;
 
   @ApiProperty({ example: 'dfdgdg40-dg345g-fgdf', required: true })
   @IsUUID()
