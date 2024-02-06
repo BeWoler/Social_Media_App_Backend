@@ -49,6 +49,7 @@ export class AuthService {
     if (user && isCorrectPassword) {
       const payload: AuthDTO = { email, password: authCredentialsDto.password };
       const accessToken: string = this.jwtService.sign(payload);
+
       return { user: { ...user, password: null }, accessToken };
     } else {
       throw new UnauthorizedException('Incorrect login credentials!');
