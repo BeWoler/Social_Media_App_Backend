@@ -3,10 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { PostModule } from './modules/post/post.module';
 import { Post } from './modules/post/entities/post.entity';
-// import { LikeModule } from './modules/like/like.module';
-// import { Like } from './modules/like/entities/like.entity';
 import { User } from './modules/user/entities/user.entity';
 import { UserModule } from './modules/user/user.module';
+import { AuthService } from './modules/auth/auth.service';
+import { JwtStrategy } from './strategy/jwt.strategy';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -25,9 +26,10 @@ import { UserModule } from './modules/user/user.module';
       synchronize: true,
       logging: true,
     }),
+    AuthModule,
     PostModule,
-    // LikeModule,
     UserModule
   ],
+  providers: [AuthService, JwtStrategy]
 })
 export class AppModule {}

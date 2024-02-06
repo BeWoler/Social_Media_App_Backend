@@ -9,10 +9,11 @@ export class UserRequestDTO {
 
   @ApiProperty({ example: 'Michael', required: false })
   @IsString()
-  name?: string; 
+  name?: string;
 
-  @ApiProperty({ example: 'github', required: true })
-  provider: string;
+  @ApiProperty({ example: 'anypass', required: true })
+  @IsString()
+  password: string; 
 
   @ApiProperty({ example: 'https://avatars.githubusercontent.com', required: false })
   @IsNotEmpty()

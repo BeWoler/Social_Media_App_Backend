@@ -1,21 +1,15 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, Param, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { UserRequestDTO } from "./dto/user.request.dto";
 import { UserResponseDTO } from "./dto/user.response.dto";
 import { userSwagger } from "./user.swagger";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ConfigService } from "@nestjs/config/dist/config.service";
+import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  @Post()
-  @ApiOperation(userSwagger.CREATE_USER.descr)
-  @ApiResponse(userSwagger.CREATE_USER.res)
-  @HttpCode(HttpStatus.CREATED)
-  async createUser(@Body() user: UserRequestDTO): Promise<UserResponseDTO> {
-    return this.userService.createUser(user)
-  }
+  constructor(private userService: UserService, private configService: ConfigService) {}
 
   @Get(':id')
   @ApiOperation(userSwagger.GET_USER_BY_ID.descr)

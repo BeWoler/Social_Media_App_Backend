@@ -8,12 +8,12 @@ export class User {
   @Column({ type: 'varchar', length: 30})
   email: string;
 
-  @Column({ type: 'text'})
+  @Column({ type: 'varchar' })
+  password: string; 
+
+  @Column({ type: 'text', default: ''})
   name: string;
 
-  @Column({ type: 'text'})
+  @Column({ type: 'text', default: ''})
   image: string;
-
-  @Column({ type: 'text' })
-  provider: string;
 }
