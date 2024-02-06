@@ -21,7 +21,7 @@ export class AuthController {
       res.cookie('accessToken', data.accessToken, {
         expires: expirationDate,
         sameSite: 'strict',
-        httpOnly: true,
+        httpOnly: false,
       });
     }
     res.send(data);
