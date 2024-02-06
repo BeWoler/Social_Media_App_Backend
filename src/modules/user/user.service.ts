@@ -11,7 +11,7 @@ export class UserService {
   ) {}
 
   async getUserById(userId: string): Promise<UserResponseDTO> {
-    const user = this.userRepository.findOneBy({ id: userId })
+    const user = await this.userRepository.findOneBy({ id: userId })
     return { ...user, password: null }
   }
 

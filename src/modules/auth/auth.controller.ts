@@ -1,9 +1,16 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDTO } from './dto/auth.dto';
 import { UserResponseDTO } from '../user/dto/user.response.dto';
 import { UserRequestDTO } from '../user/dto/user.request.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -32,5 +39,18 @@ export class AuthController {
     @Body() createUserDto: UserRequestDTO,
   ): Promise<UserResponseDTO> {
     return this.authService.signup(createUserDto);
+  }
+
+  @Post('/verify')
+  async verify(
+    @Body() { userId }: { userId: string },
+    @Req() req: Request,
+  ): Promise<{ user: UserResponseDTO; verified: boolean }> {
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      return this.authService.verifyToken(userId, token);
+    } catch (e) {
+      throw new UnauthorizedException('Incorrect token!');
+    }
   }
 }

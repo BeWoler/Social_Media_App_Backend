@@ -47,12 +47,23 @@ export class AuthService {
       user.password,
     );
     if (user && isCorrectPassword) {
-      const payload: AuthDTO = { email, password: authCredentialsDto.password };
+      const payload: AuthDTO = { email, password: authCredentialsDto.password, id: user.id };
       const accessToken: string = this.jwtService.sign(payload);
 
       return { user: { ...user, password: null }, accessToken };
     } else {
       throw new UnauthorizedException('Incorrect login credentials!');
     }
+  }
+
+  async verifyToken(id: string, token: string): Promise<{ user: UserResponseDTO, verified: boolean }> {
+    const user = await this.userRepository.findOneBy({ id })
+    if(user && token) {
+      const isVerified = await this.jwtService.verify(token, { secret: process.env.JWT_SECRET})
+      if(isVerified) {
+        return { user: { ...user, password: null}, verified: true}
+      }
+    }
+    else false
   }
 }
