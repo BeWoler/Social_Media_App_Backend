@@ -9,6 +9,7 @@ export class PostResponseDTO {
   @ApiProperty({ example: {
     id: "dfrgm34-34mgkfmv4-3kfmk",
     email: "any@gmail.com",
+    username: "anyusername",
     name: "Aleksei"
   } })
   user: UserResponseDTO;

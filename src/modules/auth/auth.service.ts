@@ -25,13 +25,20 @@ export class AuthService {
       email: userRequestDto.email,
     });
 
+    const existingUsername = await this.userRepository.findOneBy({ username : userRequestDto.username});
+
     if (existingEmail) {
       throw new HttpException('Email already exist!', HttpStatus.BAD_REQUEST);
+    }
+
+    if (existingUsername) {
+      throw new HttpException('Username already exist!', HttpStatus.BAD_REQUEST);
     }
 
     const user: User = new User();
 
     user.email = userRequestDto.email;
+    user.username = userRequestDto.username;
     user.password = await bcrypt.hash(userRequestDto.password, 10);
 
     const userDTO = new UserResponseDTO(user);
@@ -45,10 +52,16 @@ export class AuthService {
   ): Promise<{ user: UserResponseDTO; accessToken: string }> {
     const email: string = authCredentialsDto.email;
     const user = await this.userRepository.findOneBy({ email });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid login credentials!');
+    }
+
     const isCorrectPassword = await bcrypt.compare(
       authCredentialsDto.password,
       user.password,
     );
+
     if (user && isCorrectPassword) {
       const payload: AuthDTO = { email, password: authCredentialsDto.password, id: user.id };
       const accessToken: string = this.jwtService.sign(payload);

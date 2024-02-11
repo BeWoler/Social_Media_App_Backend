@@ -7,6 +7,11 @@ export class UserRequestDTO {
   @IsEmail()
   email: string;
 
+  @ApiProperty({ example: 'anyusername', required: true })
+  @IsNotEmpty()
+  @IsString()
+  username: string;
+
   @ApiProperty({ example: 'Michael', required: false })
   @IsString()
   name?: string;

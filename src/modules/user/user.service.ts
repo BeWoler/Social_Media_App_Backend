@@ -17,6 +17,13 @@ export class UserService {
     return userDTO;
   }
 
+  async getUserByUsername(username: string): Promise<UserResponseDTO> {
+    const user = await this.userRepository.findOneBy({ username })
+    const userDTO = new UserResponseDTO(user);
+
+    return userDTO;
+  }
+
   async getAllUsers(): Promise<UserResponseDTO[]> {
     const users = await this.userRepository.find();
     const usersDTO = users.map((user: User) => {
