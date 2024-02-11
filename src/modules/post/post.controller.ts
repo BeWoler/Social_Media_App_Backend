@@ -15,7 +15,7 @@ export class PostController {
   @ApiOperation(postSwagger.CREATE_POST.descr)
   @ApiResponse(postSwagger.CREATE_POST.res)
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() postRequestDto: PostRequestDTO): Promise<PostResponseDTO> {
+  async create(@Body() postRequestDto: PostRequestDTO): Promise<string> {
     return this.postService.createPost(postRequestDto)
   }
 

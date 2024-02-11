@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "src/modules/user/entities/user.entity";
+import { Post } from "../entities/post.entity";
+import { UserResponseDTO } from "src/modules/user/dto/user.response.dto";
 
 export class PostResponseDTO {
   @ApiProperty({ example: '13wekgmekm' })
@@ -10,7 +11,7 @@ export class PostResponseDTO {
     email: "any@gmail.com",
     name: "Aleksei"
   } })
-  user: User;
+  user: UserResponseDTO;
 
   @ApiProperty({ example: 'Post Content' })
   description: string;
@@ -18,9 +19,14 @@ export class PostResponseDTO {
   @ApiProperty({ example: 'Post Title' })
   title: string;
 
-  @ApiProperty({ example: 32 })
-  likesCount: number;
-
   @ApiProperty({ example: '22-11-23T22:00:00Z' })
   createdAt: Date;
+
+  constructor(post: Post) {
+    this.id = post.id;
+    this.user = post.user;
+    this.description = post.description;
+    this.title = post.title;
+    this.createdAt = post.createdAt;
+  }
 }

@@ -12,13 +12,18 @@ export class UserService {
 
   async getUserById(userId: string): Promise<UserResponseDTO> {
     const user = await this.userRepository.findOneBy({ id: userId })
-    return { ...user, password: null }
+    const userDTO = new UserResponseDTO(user);
+
+    return userDTO;
   }
 
   async getAllUsers(): Promise<UserResponseDTO[]> {
-    return (await this.userRepository.find()).map((user) => ({
-      ...user,
-      password: null
-    }));
+    const users = await this.userRepository.find();
+    const usersDTO = users.map((user: User) => {
+      const userDTO = new UserResponseDTO(user)
+      return userDTO;
+    })
+
+    return usersDTO;
   }
 }

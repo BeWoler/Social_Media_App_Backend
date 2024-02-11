@@ -4,6 +4,7 @@ import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { PostRequestDTO } from './dto/post.request.dto';
 import { PostResponseDTO } from './dto/post.response.dto';
+import { UserResponseDTO } from '../user/dto/user.response.dto';
 
 @Injectable()
 export class PostService {
@@ -12,36 +13,41 @@ export class PostService {
     private readonly postRepository: Repository<PostResponseDTO>,
   ) {}
 
-  async createPost(postRequestDto: PostRequestDTO): Promise<PostResponseDTO> {
-    const post: Post = new Post();
-
+  async createPost(postRequestDto: PostRequestDTO): Promise<string> {
     if (!postRequestDto.user)
       throw new HttpException('User is not provide', HttpStatus.BAD_REQUEST);
 
-    post.user = postRequestDto.user;
-    post.title = postRequestDto.title;
-    post.description = postRequestDto.description;
-    post.createdAt = new Date();
+    const post: PostRequestDTO = new PostRequestDTO(postRequestDto);
 
-    return this.postRepository.save(post);
+    await this.postRepository.save(post);
+
+    return 'Created';
   }
 
   async getAllPosts(): Promise<PostResponseDTO[]> {
-    return (await this.postRepository.find({ relations: ['user'] })).map(
-      (post) => ({
-        ...post,
-        user: { ...post.user, password: null },
-      }),
-    );
+    const posts = await this.postRepository.find({ relations: ['user'] });
+    const postsDTO = posts.map((post: PostResponseDTO) => {
+      const postDTO = new PostResponseDTO(post);
+      postDTO.user = new UserResponseDTO(post.user);
+
+      return postDTO;
+    });
+    return postsDTO;
   }
 
   async getAllUserPosts(id: string): Promise<PostResponseDTO[]> {
-    return (
-      await this.postRepository.find({
-        where: { user: { id: id } },
-        relations: ['user'],
-      })
-    ).map((post) => ({ ...post, user: { ...post.user, password: null } }));
+    const posts = await this.postRepository.find({
+      where: { user: { id: id } },
+      relations: ['user'],
+    });
+
+    const postsDTO = posts.map((post: PostResponseDTO) => {
+      const postDTO = new PostResponseDTO(post);
+      postDTO.user = new UserResponseDTO(post.user);
+
+      return postDTO;
+    });
+    return postsDTO;
   }
 
   async getPostById(id: string): Promise<PostResponseDTO> {
@@ -49,7 +55,11 @@ export class PostService {
       where: { id },
       relations: ['user'],
     });
-    return { ...post, user: { ...post.user, password: null } };
+
+    const postDTO = new PostResponseDTO(post);
+    postDTO.user = new UserResponseDTO(post.user);
+
+    return postDTO;
   }
 
   async removePostById(id: string): Promise<{ affected?: number }> {

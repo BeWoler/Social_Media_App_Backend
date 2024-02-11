@@ -34,7 +34,10 @@ export class AuthService {
     user.email = userRequestDto.email;
     user.password = await bcrypt.hash(userRequestDto.password, 10);
 
-    return this.userRepository.save(user);
+    const userDTO = new UserResponseDTO(user);
+    await this.userRepository.save(user);
+
+    return userDTO;
   }
 
   async signin(
@@ -50,7 +53,9 @@ export class AuthService {
       const payload: AuthDTO = { email, password: authCredentialsDto.password, id: user.id };
       const accessToken: string = this.jwtService.sign(payload);
 
-      return { user: { ...user, password: null }, accessToken };
+      const userDTO: UserResponseDTO = new UserResponseDTO(user);
+
+      return { user: userDTO, accessToken };
     } else {
       throw new UnauthorizedException('Incorrect login credentials!');
     }
@@ -61,7 +66,8 @@ export class AuthService {
     if(user && token) {
       const isVerified = await this.jwtService.verify(token, { secret: process.env.JWT_SECRET})
       if(isVerified) {
-        return { user: { ...user, password: null}, verified: true}
+        const userDTO: UserResponseDTO = new UserResponseDTO(user);
+        return { user: userDTO, verified: true}
       }
     }
     else false

@@ -20,4 +20,13 @@ export class PostRequestDTO {
   @IsString()
   @IsNotEmpty()
   user: User;
+
+  createdAt: Date;
+
+  constructor(post: PostRequestDTO) {
+    this.title = post.title;
+    this.description = post.description;
+    this.user = post.user;
+    this.createdAt = new Date();
+  }
 }
