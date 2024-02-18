@@ -5,12 +5,14 @@ import {
   Res,
   Req,
   UnauthorizedException,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDTO } from './dto/auth.dto';
 import { UserResponseDTO } from '../user/dto/user.response.dto';
 import { UserRequestDTO } from '../user/dto/user.request.dto';
 import { Request, Response } from 'express';
+import { cookieConfig } from 'src/config/cookie.config';
 
 @Controller('auth')
 export class AuthController {
@@ -23,13 +25,7 @@ export class AuthController {
   ): Promise<{ user: UserResponseDTO; accessToken: string } | void> {
     const data = await this.authService.signin(authCredentialsDto);
     if (data.accessToken) {
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 1);
-      res.cookie('accessToken', data.accessToken, {
-        expires: expirationDate,
-        sameSite: 'strict',
-        httpOnly: false,
-      });
+      res.cookie('accessToken', data.accessToken, cookieConfig);
     }
     res.send(data);
   }
@@ -41,14 +37,19 @@ export class AuthController {
     return this.authService.signup(createUserDto);
   }
 
+  @Delete('/logout')
+  async logout(@Req() req: Request): Promise<void> {
+    const token = req.headers.authorization.split(' ')[1];
+    return this.authService.logout(token);
+  }
+
   @Post('/verify')
   async verify(
-    @Body() { userId }: { userId: string },
     @Req() req: Request,
-  ): Promise<{ user: UserResponseDTO; verified: boolean }> {
+  ): Promise<{ user: UserResponseDTO; accessToken: string } | boolean> {
     try {
       const token = req.headers.authorization.split(' ')[1];
-      return this.authService.verifyToken(userId, token);
+      return this.authService.verifyToken(token);
     } catch (e) {
       throw new UnauthorizedException('Incorrect token!');
     }

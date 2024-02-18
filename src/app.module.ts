@@ -8,6 +8,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthService } from './modules/auth/auth.service';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { AuthModule } from './modules/auth/auth.module';
+import { Auth } from './modules/auth/entities/auth.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { AuthModule } from './modules/auth/auth.module';
       port: +process.env.PORT,
       password: process.env.PG_PASSWORD,
       username: process.env.PG_USERNAME,
-      entities: [Post, User],
+      entities: [Post, User, Auth],
       database: process.env.PG_DB,
       synchronize: true,
       logging: true,

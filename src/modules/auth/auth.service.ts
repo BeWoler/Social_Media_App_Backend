@@ -12,11 +12,13 @@ import { AuthDTO } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UserResponseDTO } from '../user/dto/user.response.dto';
 import { UserRequestDTO } from '../user/dto/user.request.dto';
+import { Auth } from './entities/auth.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
+    @InjectRepository(Auth) private readonly authRepository: Repository<Auth>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
@@ -25,14 +27,19 @@ export class AuthService {
       email: userRequestDto.email,
     });
 
-    const existingUsername = await this.userRepository.findOneBy({ username : userRequestDto.username});
+    const existingUsername = await this.userRepository.findOneBy({
+      username: userRequestDto.username,
+    });
 
     if (existingEmail) {
       throw new HttpException('Email already exist!', HttpStatus.BAD_REQUEST);
     }
 
     if (existingUsername) {
-      throw new HttpException('Username already exist!', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Username already exist!',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const user: User = new User();
@@ -63,10 +70,18 @@ export class AuthService {
     );
 
     if (user && isCorrectPassword) {
-      const payload: AuthDTO = { email, password: authCredentialsDto.password, id: user.id };
+      const payload: AuthDTO = {
+        email,
+        password: authCredentialsDto.password,
+        id: user.id,
+      };
       const accessToken: string = this.jwtService.sign(payload);
 
       const userDTO: UserResponseDTO = new UserResponseDTO(user);
+
+      const data = { user: userDTO, accessToken: accessToken };
+
+      await this.authRepository.save(data);
 
       return { user: userDTO, accessToken };
     } else {
@@ -74,15 +89,28 @@ export class AuthService {
     }
   }
 
-  async verifyToken(id: string, token: string): Promise<{ user: UserResponseDTO, verified: boolean }> {
-    const user = await this.userRepository.findOneBy({ id })
-    if(user && token) {
-      const isVerified = await this.jwtService.verify(token, { secret: process.env.JWT_SECRET})
-      if(isVerified) {
-        const userDTO: UserResponseDTO = new UserResponseDTO(user);
-        return { user: userDTO, verified: true}
+  async logout(token: string): Promise<void> {
+    await this.authRepository.delete({ accessToken: token });
+  }
+
+  async verifyToken(
+    token: string,
+  ): Promise<{ user: UserResponseDTO; accessToken: string } | boolean> {
+    const userAuth = await this.authRepository.findOneBy({
+      accessToken: token,
+    });
+    if (userAuth) {
+      const isVerified = await this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+
+      if (isVerified) {
+        const userDTO: UserResponseDTO = new UserResponseDTO(userAuth.user);
+        return { user: userDTO, accessToken: token };
       }
+    } else {
+      await this.logout(token);
+      return false;
     }
-    else false
   }
 }
