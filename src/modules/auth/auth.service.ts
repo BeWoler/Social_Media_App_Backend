@@ -96,8 +96,11 @@ export class AuthService {
   async verifyToken(
     token: string,
   ): Promise<{ user: UserResponseDTO; accessToken: string } | boolean> {
-    const userAuth = await this.authRepository.findOneBy({
-      accessToken: token,
+    if(!token) return false;
+
+    const userAuth = await this.authRepository.findOne({
+      where: { accessToken: token },
+      relations: ['user'],
     });
     if (userAuth) {
       const isVerified = await this.jwtService.verify(token, {
