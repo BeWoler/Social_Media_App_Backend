@@ -14,6 +14,12 @@ export class PostService {
   ) {}
 
   async createPost(postRequestDto: PostRequestDTO): Promise<string> {
+    if (!postRequestDto.title || !postRequestDto.description) {
+      throw new HttpException(
+        'All fields are required!',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     if (!postRequestDto.user)
       throw new HttpException('User is not provide', HttpStatus.BAD_REQUEST);
 
