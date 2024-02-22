@@ -23,6 +23,11 @@ export class AuthService {
   ) {}
 
   async signup(userRequestDto: UserRequestDTO): Promise<UserResponseDTO> {
+
+    if(!userRequestDto.email || !userRequestDto.password || !userRequestDto.username) {
+      throw new HttpException('All fields are required', HttpStatus.BAD_REQUEST);
+    }
+    
     const existingEmail = await this.userRepository.findOneBy({
       email: userRequestDto.email,
     });
